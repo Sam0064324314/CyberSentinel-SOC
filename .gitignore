@@ -11,16 +11,10 @@ venv/
 .venv/
 env/
 
-# Data files (too large for Git)
+# Data files (too large for Git — 10GB total)
 *.csv
-*.h5
-*.pkl
 
-# Saved models (regenerated via training)
-models/*.joblib
-models/*.pkl
-
-# Logs
+# Logs (regenerated at runtime)
 logs/*.log
 
 # IDE

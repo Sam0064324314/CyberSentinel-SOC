@@ -43,16 +43,13 @@ def load_data(sample_size=None):
             if file_path.exists():
                 logger.info(f"Loading {file}...")
                 
-                # If sampling is requested, we read with nrows first to save IO/memory
                 if sample_size:
-                    # Heuristic: Read more than needed then sample to ensure randomness
                     rows_to_read = max(200000, sample_size * 2) 
                     df = pd.read_csv(file_path, usecols=SELECTED_COLUMNS, nrows=rows_to_read)
                     df = df.sample(n=min(len(df), sample_size // len(DATA_FILES)), random_state=42)
                 else:
                     df = pd.read_csv(file_path, usecols=SELECTED_COLUMNS)
                 
-                # Optimization
                 for col in df.select_dtypes(include=['float64']).columns:
                     df[col] = df[col].astype('float32')
                 for col in df.select_dtypes(include=['int64']).columns:
@@ -63,10 +60,11 @@ def load_data(sample_size=None):
                 logger.warning(f"File not found: {file}")
         
         if not dfs:
-            raise FileNotFoundError("No dataset files found.")
+            logger.warning("No CSV files found — generating synthetic demo data.")
+            st.info("📦 No dataset CSVs found. Using synthetic demo data. See README for full dataset instructions.")
+            return _generate_synthetic_data(sample_size or 10000)
             
         full_df = pd.concat(dfs, ignore_index=True)
-        # Drop duplicates across all files
         full_df.drop_duplicates(inplace=True)
         logger.info(f"Data loaded successfully. Shape: {full_df.shape}")
         
@@ -74,8 +72,54 @@ def load_data(sample_size=None):
         
     except Exception as e:
         logger.error(f"Error loading data: {e}")
-        st.error(f"Failed to load data: {e}")
-        return pd.DataFrame()
+        st.warning(f"Data load failed ({e}). Falling back to synthetic data.")
+        return _generate_synthetic_data(sample_size or 10000)
+
+
+def _generate_synthetic_data(n_samples=10000):
+    """
+    Generate realistic synthetic network flow data when real CSVs are unavailable.
+    Produces the same columns as the real dataset so all downstream code works.
+    """
+    np.random.seed(42)
+
+    labels = ['Normal', 'DoS', 'DDoS', 'Reconnaissance', 'Theft']
+    weights = [0.60, 0.15, 0.10, 0.10, 0.05]
+
+    data = {
+        'DST_TOS':                     np.random.choice([0, 4, 8, 16, 32], n_samples, p=[0.7, 0.1, 0.1, 0.05, 0.05]),
+        'SRC_TOS':                     np.random.choice([0, 4, 8, 16, 32], n_samples, p=[0.75, 0.1, 0.05, 0.05, 0.05]),
+        'TCP_WIN_SCALE_OUT':           np.random.randint(0, 15, n_samples),
+        'TCP_WIN_SCALE_IN':            np.random.randint(0, 15, n_samples),
+        'TCP_FLAGS':                   np.random.randint(0, 255, n_samples),
+        'TCP_WIN_MAX_OUT':             np.random.randint(0, 65535, n_samples),
+        'PROTOCOL':                    np.random.choice([6, 17, 1, 47], n_samples, p=[0.6, 0.25, 0.1, 0.05]),
+        'TCP_WIN_MIN_OUT':             np.random.randint(0, 32768, n_samples),
+        'TCP_WIN_MIN_IN':              np.random.randint(0, 32768, n_samples),
+        'TCP_WIN_MAX_IN':              np.random.randint(0, 65535, n_samples),
+        'LAST_SWITCHED':               np.random.randint(1600000000, 1700000000, n_samples),
+        'TCP_WIN_MSS_IN':              np.random.randint(0, 1460, n_samples),
+        'TOTAL_FLOWS_EXP':             np.random.randint(0, 100, n_samples),
+        'FIRST_SWITCHED':              np.random.randint(1600000000, 1700000000, n_samples),
+        'FLOW_DURATION_MILLISECONDS':  np.random.exponential(5000, n_samples).astype(int),
+        'LABEL':                       np.random.choice(labels, n_samples, p=weights),
+    }
+
+    # Make attacks look different from normal traffic
+    df = pd.DataFrame(data)
+    attack_mask = df['LABEL'] != 'Normal'
+    df.loc[attack_mask, 'TCP_FLAGS'] = np.random.randint(128, 255, attack_mask.sum())
+    df.loc[attack_mask, 'DST_TOS'] = np.random.choice([8, 16, 32], attack_mask.sum())
+    df.loc[attack_mask, 'TCP_WIN_SCALE_IN'] = np.random.randint(10, 15, attack_mask.sum())
+    df.loc[attack_mask, 'FLOW_DURATION_MILLISECONDS'] = np.random.randint(0, 500, attack_mask.sum())
+
+    for col in df.select_dtypes(include=['float64']).columns:
+        df[col] = df[col].astype('float32')
+    for col in df.select_dtypes(include=['int64']).columns:
+        df[col] = df[col].astype('int32')
+
+    logger.info(f"Synthetic data generated. Shape: {df.shape}")
+    return df
 
 @st.cache_data(show_spinner=False)
 def preprocess_data(df, target_col=TARGET_COLUMN):

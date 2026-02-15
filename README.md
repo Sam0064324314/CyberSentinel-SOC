@@ -53,30 +53,13 @@ CyberSentinel is an enterprise-grade Security Operations Center (SOC) dashboard 
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-repo/cybersentinel.git
-cd cybersentinel/IntrusionDetectionDashboard
+git clone https://github.com/Sam0064324314/CyberSentinel-SOC.git
+cd CyberSentinel-SOC
 
 pip install -r requirements.txt
 ```
 
-### 2. Add Dataset
-
-Place the dataset CSV files in the **parent directory** of the dashboard folder:
-
-```
-Detect cyber Intrusion/
-├── dataset-part1.csv          ← Data files here
-├── dataset-part2.csv
-├── dataset-part3.csv
-├── dataset-part4.csv
-└── IntrusionDetectionDashboard/
-    ├── app.py
-    └── ...
-```
-
-> **Dataset:** This project uses the [NF-UQ-NIDS](https://staff.itee.uq.edu.au/marius/NIDS_datasets/) network flow dataset. Each CSV contains labeled network flows with 15 feature columns and a `LABEL` column for classification.
-
-### 3. Launch
+### 2. Launch (Zero Config — Works Immediately)
 
 ```bash
 streamlit run app.py
@@ -84,12 +67,31 @@ streamlit run app.py
 
 The dashboard opens at **http://localhost:8501**.
 
-### 4. Train & Explore
+> **✅ No dataset download required!** The app includes a built-in synthetic data generator that creates realistic network flow data automatically. Pre-trained models are also included in the repo — you can start exploring immediately.
+
+### 3. Train & Explore
 
 1. **Sidebar → ⚡ TRAIN ALL MODELS** — Trains all 5 architectures
 2. **📈 MODEL COMPARISON** — View benchmarks and select best model
 3. **🚨 REAL-TIME OPS → ▶ START** — Launch live simulation
 4. **🧠 INTELLIGENCE** — Explore model reasoning
+
+### 4. (Optional) Use Full Dataset
+
+For production-grade accuracy, download the [NF-UQ-NIDS dataset](https://staff.itee.uq.edu.au/marius/NIDS_datasets/) and place the CSV files in the **parent directory**:
+
+```
+ParentFolder/
+├── dataset-part1.csv          ← Place CSVs here
+├── dataset-part2.csv
+├── dataset-part3.csv
+├── dataset-part4.csv
+└── CyberSentinel-SOC/
+    ├── app.py
+    └── ...
+```
+
+The app will automatically detect and use real data when available.
 
 ---
 
