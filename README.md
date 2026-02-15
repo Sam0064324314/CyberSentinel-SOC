@@ -358,12 +358,40 @@ streamlit run app.py
 
 This project uses the **NF-UQ-NIDS** (NetFlow University of Queensland Network Intrusion Detection System) dataset.
 
-- **Source:** [UQ NIDS Datasets](https://staff.itee.uq.edu.au/marius/NIDS_datasets/)
-- **Format:** CSV with NetFlow v9 features
-- **Size:** ~1.6M records across 4 files
-- **Classes:** Normal traffic + multiple attack categories (DoS, DDoS, Reconnaissance, etc.)
+> **💡 The app works out of the box with synthetic data.** Download the real dataset below for production-grade accuracy.
 
-Place all 4 CSV files in the parent directory of the dashboard folder.
+### Download Links
+
+| Source | Link | Size |
+|:---|:---|:---|
+| **Kaggle (Recommended)** | [NF-UQ-NIDS-v2 on Kaggle](https://www.kaggle.com/datasets/dhoogla/nf-uq-nids-v2) | ~13.7 GB |
+| **UQ Official** | [UQ Cyber Research Centre](https://staff.itee.uq.edu.au/marius/NIDS_datasets/) | ~10 GB (4 CSVs) |
+
+### Setup Instructions
+
+1. **Download** the dataset from either link above
+2. **Extract** the CSV files
+3. **Place** them in the **parent directory** of this repo:
+
+```
+YourFolder/
+├── dataset-part1.csv       ← Place CSV files here
+├── dataset-part2.csv
+├── dataset-part3.csv
+├── dataset-part4.csv
+└── CyberSentinel-SOC/
+    ├── app.py
+    └── ...
+```
+
+4. **Restart** the dashboard — it will auto-detect the real data
+
+### Dataset Details
+
+- **Format:** CSV with NetFlow v9 features
+- **Records:** ~12M flows (V1) / ~76M flows (V2)
+- **Classes:** Normal, DoS, DDoS, Reconnaissance, Theft, and more
+- **Features:** 15 selected network flow attributes (TCP flags, window sizes, timing, protocol fields)
 
 ---
 
