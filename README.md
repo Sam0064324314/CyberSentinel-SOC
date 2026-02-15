@@ -19,6 +19,9 @@
 
 ---
 
+##[ig 7.pdf](https://github.com/user-attachments/files/25323587/ig.7.pdf)
+
+
 ## Dataset
 https://www.kaggle.com/datasets/h2020simargl/simargl2021-network-intrusion-detection-dataset
 
