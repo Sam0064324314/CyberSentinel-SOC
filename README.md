@@ -19,6 +19,9 @@
 
 ---
 
+## Dataset
+https://www.kaggle.com/datasets/h2020simargl/simargl2021-network-intrusion-detection-dataset
+
 ## 🎯 Overview
 
 CyberSentinel is an enterprise-grade Security Operations Center (SOC) dashboard that combines machine learning-based intrusion detection with real-time traffic simulation and explainable AI. It processes network flow data to classify traffic as normal or malicious across multiple attack categories.
