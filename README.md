@@ -19,7 +19,7 @@
 
 ---
 
-##[ig 7.pdf](https://github.com/user-attachments/files/25323587/ig.7.pdf)
+https://github.com/user-attachments/assets/b64849c6-0a66-442b-befd-4035268c1c61
 
 
 ## Dataset
